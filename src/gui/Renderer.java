@@ -16,10 +16,10 @@ public class Renderer {
     public Renderer(BufferedImage img, Canvas canvas) {
         this.canvas = canvas;
         this.img = img;
-        setTimer();
+        setTimer(); // volame metodu pro vykresleni za cas
     }
 
-    private void setTimer() {
+    private void setTimer() { // Nastavujeme automaticke vykresleni za urcity cas - snimky za sekundu
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -28,18 +28,20 @@ public class Renderer {
         }, 0, FPS);
     }
 
-    public void clear() {
+    public void clear() { // Metoda pro vycisteni okna - nastavime novou plochu - nechame ji vykreslit zakladni barvou - v mem pripade cernou
         Graphics g = img.getGraphics();
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 500, 500);
     }
 
-    public void drawPixel(int x, int y, int color) {
+    public void drawPixel(int x, int y, int color) { // Metoda nakresli pixel
         img.setRGB(x, y, color);
     }
 
-    public void drawLine(int x1, int y1, int x2, int y2, int color) {
-        //Zdrojový kod (https://beginnersbook.com/2013/04/try-catch-in-java/)
+    public void drawLine(int x1, int y1, int x2, int y2, int color) { // Metoda vytvorena na bazi Trivialniho algoritmu
+        // Zdrojový kod (https://beginnersbook.com/2013/04/try-catch-in-java/)
+        // Try a catch - pro pripad, ze uzivatel budu chtit vykreslit mimo kreslime platno
+        // Algoritmus psan na cviceni
         try {
             float k = (y2 - y1) / (float) (x2 - x1);
             float q = y1 - k * x1;
@@ -64,17 +66,19 @@ public class Renderer {
                 for (int y = y1; y <= y2; y++) {
                     int x = Math.round((y - q) / k);
                     drawPixel(x, y, color);
-
                 }
             }
         } catch (Exception e) {
             // Zdrojový kod (https://www.mkyong.com/swing/java-swing-how-to-make-a-simple-dialog/)
-            JOptionPane.showMessageDialog(null, "Kreslíš mimo okno, debílku!", "Chybička se vloudila", JOptionPane.ERROR_MESSAGE);
+            // Zdrojový kod (https://beginnersbook.com/2013/04/try-catch-in-java/)
+            // Zachytime pokus o vykresleni mimo pole a nahlasime chybove hlaseni uzivateli, aby vedel co je spatne
+            JOptionPane.showMessageDialog(null, "Maluješ mimo okno", "Chybové hlášení", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public void drawLineDDA2(int x1, int y1, int x2, int y2, int color) {
-        try{
+    public void drawLineDDA2(int x1, int y1, int x2, int y2, int color) { // Metoda, ktera implementuje algoritmus DDA2 pro vykresleni usecky
+        try { // Opet try a catch pro zachyceni pokusu o vykresleni mimo okno platna
+            // Algoritmus psan na cviceni a dodelavan za ukol
             int dx, dy;
             float k, h, g, x, y;
 
@@ -118,50 +122,29 @@ public class Renderer {
                 }
                 y = y1;
                 x = x1;
-                //jak otočit bod okolo budu - java - anglicky
+
                 for (int i = 0; i <= Math.max(Math.abs(dx), Math.abs(dy)); i++) {
                     drawPixel(Math.round(x), Math.round(y), color);
                     x = x + g;
                     y = y + h;
                 }
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             //https://beginnersbook.com/2013/04/try-catch-in-java/
-            JOptionPane.showMessageDialog(null, "Maluješ mimo okno", "Chyba",JOptionPane.ERROR_MESSAGE);
+            // Zachytime pokus o vykresleni mimo pole a nahlasime chybove hlaseni uzivateli, aby vedel co je spatne
+            JOptionPane.showMessageDialog(null, "Maluješ mimo okno", "Chybové hlášení", JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
-    public void drawPolygon(List<Integer> points) {
-        clear();
-        //drawLine(points.get(0), points.get(1), points.get(2), points.get(3));
-        if (points.size() >= 6) {
-
-            for (int i = 0; i < points.size() - 2; i += 2) {
-                drawLine(points.get(i), points.get(i + 1), points.get(i + 2), points.get(i + 3), 0xFF4488);
+    public void drawPolygon(List<Integer> points) { // Metoda pro hledani bodu polygonu - vstupni hodnota pole, kde jsou ulozeny jednotlive souradnice
+        clear(); // Vycistime si latno nez zacneme cokoliv vykreslovat
+        if (points.size() >= 6) { // Zkontrolujeme zdali jiz mame dostatecny pocet bodu pro vykresleni alespon zakladniho polygonu - ten je tvoren tremi useckami - tudiz tremi body neboli sesti hodnotami
+            for (int i = 0; i < points.size() - 2; i += 2) { // For cyklus, ktery nam prochazi pole a bere si souradnice -- points.size() - 2 -- kontrolujeme zdali jiz nebereme body, ktere jeste nejsou v poli
+                drawLine(points.get(i), points.get(i + 1), points.get(i + 2), points.get(i + 3), 0xFF4488); // kreslime caru podle hodnot z pole - bereme podle indexu x1,y1,x2,y2
             }
-            drawLine(points.get(0), points.get(1), points.get(points.size() - 2), points.get(points.size() - 1), 0xFF4488);
+            drawLine(points.get(0), points.get(1), points.get(points.size() - 2), points.get(points.size() - 1), 0xFF4488); // Kreslime finalni caru mezi poslednim bodeme a prvnim bodem
+            // bereme posleni bod z pole - bereme dve posledni hodnoty -- points.size() - 2) (pro x2) -- points.get(points.size() - 1) (pro y2)
         }
     }
-
-
-   /* public void drawNuhelnik(int x0, int y0, int konecX, int konecY, int color) {
-        double x1 = konecX - x0;
-        double y1 = konecY - y0;
-
-        int n = 1;
-        int angle = 360/n;
-
-        double x2 = x1 * Math.cos(angle) - y1 * Math.sin(angle));
-        double y2 = x1 * Math.sin(angle) + y1 * Math.cos(angle));
-
-        konecX = (int) (x2 + x0);
-        konecY = (int) (y2 + y0);
-
-        for(int i =0; angle<=360; i++){
-            drawLine(x1,y1,x2,y2,0x222244);
-        }
-    }*/
 }
 

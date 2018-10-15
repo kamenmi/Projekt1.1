@@ -14,56 +14,28 @@ public class MainFrame_Polygon extends JFrame {
     private Canvas canvas;
     private Renderer renderer;
     private List<Integer> cislaPole = new ArrayList<>();
-    private int x1, y1, x2, y2;
-    private int prvniX, prvniY;
-    private int vrcholy = 3;
 
-    public MainFrame_Polygon() {
-        init();
+    public MainFrame_Polygon() { //v konstruktoru si vytvorime dulezite prvky pro kresleni a pote pridame listenery pro praci s mysi pro nasledne kresleni
+        init(); // volame metodu init()
 
-        img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
+        img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB); // vytvarime okno
         canvas = new Canvas();
 
         add(canvas);
         setVisible(true);
         renderer = new Renderer(img, canvas);
 
-        canvas.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                renderer.clear();
-                renderer.drawLineDDA2(prvniX, prvniY, e.getX(), e.getY(), 0xFFFF11);
-
-            }
-        });
-
-        canvas.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                prvniX = e.getX();
-                prvniY = e.getY();
-                x1 = e.getX();
-                y1 = e.getY();
-            }
-
+        canvas.addMouseListener(new MouseAdapter() { // vytvorime mouse Listener pro kliknuti mysi
             @Override
             public void mouseClicked(MouseEvent e) {
-                cislaPole.add(e.getX());
+                cislaPole.add(e.getX()); // zavadime hodnoty X a Y do tabulky cislaPole
                 cislaPole.add(e.getY());
-                renderer.drawPolygon(cislaPole);
-            }
-        });
-        canvas.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                x2 = e.getX();
-                y2 = e.getY();
-                // renderer.drawLineDDA2(x1, y1, x2, y2, 0xFF00FF);
+                renderer.drawPolygon(cislaPole); // vykreslujeme polygon a hodnoty si bereme z tabulky cislaPole
             }
         });
     }
 
-    public void init() {
+    public void init() { // metoda dulezita pro okno aplikace
         setTitle("Grafika Projekt");
         setSize(500, 500);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

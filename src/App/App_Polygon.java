@@ -1,6 +1,6 @@
 package App;
 
-import gui.MainFrame_Pravidelny_N;
+import gui.MainFrame_Polygon;
 
 import javax.swing.*;
 
@@ -9,7 +9,7 @@ public class App_Polygon {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new MainFrame_Pravidelny_N().setVisible(true); // vypisu tridu na polygon
+                new MainFrame_Polygon().setVisible(true); //otevre okno, ktere lze videt, z tridy MainFrame_Pravidelny_N - pro vykresleni cary
             }
         });
     }

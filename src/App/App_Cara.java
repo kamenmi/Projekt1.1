@@ -9,7 +9,7 @@ public class App_Cara {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new MainFrame_cara().setVisible(true); //prepisu na jinou tridu
+                new MainFrame_cara().setVisible(true); //otevre okno, ktere lze videt, z tridy MainFrame_cara - pro vykresleni cary
             }
         });
     }
