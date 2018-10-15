@@ -33,7 +33,18 @@ public class MainFrame_Pravidelny_N extends JFrame {
         canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-               // if(e.getKeyCode() == KeyEvent.VK_LEFT)
+                renderer.clear();
+                if(e.getKeyCode() == 37/*KeyEvent.VK_LEFT*/){
+                    if(vrcholy >3 ){
+                        vrcholy = vrcholy -1;
+                    }
+                }
+                if (e.getKeyCode() == 39/*KeyEvent.VK_RIGHT*/){
+                    if(vrcholy >= 3 ){
+                        vrcholy = vrcholy +1;
+                    }
+                }
+                polygon(x1,y1,x2,y2,vrcholy);
             }
         });
 
