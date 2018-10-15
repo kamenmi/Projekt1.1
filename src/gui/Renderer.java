@@ -3,6 +3,7 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -72,100 +73,95 @@ public class Renderer {
         }
     }
 
-    /* public void drawLineDDA2(int x1, int y1, int x2, int y2, int color) {
-         int dx, dy;
-         float k, h = 0, g, x, y;
-
-         dx = x2 - x1;
-         dy = y2 - y1;
-         k = (float) dy/dx;
-
-         x = x1;
-         y = y1;
-
-         if (dx > dy) {
-             g = 1;
-             h = k;
-
-             for (int i = 0; i <= Math.max(Math.abs(dx), Math.abs(dy));i++) {
-                 drawPixel(Math.round(x), Math.round(y), color);
-                 x = x + g;
-                 y = y + h;
-             }
-         } else {
-             g = 1 / k;
-             k = 1;
-             for (int i = 0; i <= Math.max(Math.abs(dx), Math.abs(dy));i++) {
-                 drawPixel(Math.round(x), Math.round(y), color);
-                 x = x + g;
-                 y = y + h;
-             }
-         }
- }
-     */
     public void drawLineDDA2(int x1, int y1, int x2, int y2, int color) {
-        //Zdrojovy kod (http://tech-algorithm.com/articles/drawing-line-using-bresenham-algorithm/)
-        //vubec netusim, co to dela
-        try {
-            int dx = x2 - x1;
-            int dy = y2 - y1;
-            int x = 0, y = 0, g = 0, h = 0;
+        try{
+            int dx, dy;
+            float k, h, g, x, y;
 
-            if (dx < 0) {
-                x = -1;
-            } else if (dx > 0) {
-                x = 1;
-            }
-            if (dy < 0) {
-                y = -1;
-            } else if (dy > 0) {
-                y = 1;
-            }
-            if (dx < 0) {
-                g = -1;
-            } else if (dx > 0) {
+            dx = x2 - x1;
+            dy = y2 - y1;
+            k = (float) dy / dx;
+
+            x = x1;
+            y = y1;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
                 g = 1;
-            }
-            int longest = Math.abs(dx);
-            int shortest = Math.abs(dy);
-            if (!(longest > shortest)) {
-                longest = Math.abs(dy);
-                shortest = Math.abs(dx);
-                if (dy < 0) {
-                    h = -1;
-                } else if (dy > 0) {
-                    h = 1;
+                h = k;
+
+                if (x1 > x2) {
+                    int a = x1;
+                    x1 = x2;
+                    x2 = a;
+                    int b = y1;
+                    y1 = y2;
+                    y2 = b;
                 }
-                g = 0;
-            }
-            int numerator = longest >> 1;
-            for (int i = 0; i <= longest; i++) {
-                drawPixel(x1, y1, color);
-                numerator += shortest;
-                if (!(numerator < longest)) {
-                    numerator -= longest;
-                    x1 += x;
-                    y1 += y;
-                } else {
-                    x1 += g;
-                    y1 += h;
+                y = y1;
+                x = x1;
+                for (int i = 0; i <= Math.max(Math.abs(dx), Math.abs(dy)); i++) {
+                    drawPixel(Math.round(x), Math.round(y), color);
+                    x = x + g;
+                    y = y + h;
+                }
+
+            } else {
+                g = 1 / k;
+                h = 1;
+                if (y1 > y2) {
+                    int a = y1;
+                    y1 = y2;
+                    y2 = a;
+                    int b = x1;
+                    x1 = x2;
+                    x2 = b;
+                }
+                y = y1;
+                x = x1;
+                //jak otočit bod okolo budu - java - anglicky
+                for (int i = 0; i <= Math.max(Math.abs(dx), Math.abs(dy)); i++) {
+                    drawPixel(Math.round(x), Math.round(y), color);
+                    x = x + g;
+                    y = y + h;
                 }
             }
         }
-        catch(Exception e) {
-            // Zdrojový kod (https://www.mkyong.com/swing/java-swing-how-to-make-a-simple-dialog/)
-            JOptionPane.showMessageDialog(null, "Kreslíš mimo okno, debílku!", "Chybička se vloudila", JOptionPane.ERROR_MESSAGE);
+        catch(Exception e){
+            //https://beginnersbook.com/2013/04/try-catch-in-java/
+            JOptionPane.showMessageDialog(null, "Maluješ mimo okno", "Chyba",JOptionPane.ERROR_MESSAGE);
         }
 
-     /*   public void drawPolygon(List <Integer> points) {
-            clear();
-            drawLine(points.get(0), points.get(1), points.get(2), points.get(3));
-            i += 2;
-            // for cyklus po dvou se správným omezením
-            drawLine(points.get(i), points.get(i + 1), points.get(i + 2), points.get(i + 3));
-        }*/
+    }
+
+    public void drawPolygon(List<Integer> points) {
+        clear();
+        //drawLine(points.get(0), points.get(1), points.get(2), points.get(3));
+        if (points.size() >= 6) {
+
+            for (int i = 0; i < points.size() - 2; i += 2) {
+                drawLine(points.get(i), points.get(i + 1), points.get(i + 2), points.get(i + 3), 0xFF4488);
+            }
+            drawLine(points.get(0), points.get(1), points.get(points.size() - 2), points.get(points.size() - 1), 0xFF4488);
+        }
     }
 
 
+   /* public void drawNuhelnik(int x0, int y0, int konecX, int konecY, int color) {
+        double x1 = konecX - x0;
+        double y1 = konecY - y0;
+
+        int n = 1;
+        int angle = 360/n;
+
+        double x2 = x1 * Math.cos(angle) - y1 * Math.sin(angle));
+        double y2 = x1 * Math.sin(angle) + y1 * Math.cos(angle));
+
+        konecX = (int) (x2 + x0);
+        konecY = (int) (y2 + y0);
+
+        for(int i =0; angle<=360; i++){
+            drawLine(x1,y1,x2,y2,0x222244);
+        }
+    }*/
 }
 
